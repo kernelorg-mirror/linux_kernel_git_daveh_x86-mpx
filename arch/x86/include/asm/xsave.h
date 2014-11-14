@@ -3,6 +3,7 @@
 
 #include <linux/types.h>
 #include <asm/processor.h>
+#include <asm/user.h>
 
 #define XSTATE_CPUID		0x0000000d
 

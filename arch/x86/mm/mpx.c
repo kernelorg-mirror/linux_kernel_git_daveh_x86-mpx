@@ -738,6 +738,7 @@ static int zap_bt_entries(struct mm_struct *mm,
 
 		len = min(vma->vm_end, end) - addr;
 		zap_page_range(vma, addr, len, NULL);
+		trace_mpx_unmap_zap(addr, addr+len);
 
 		vma = vma->vm_next;
 		addr = vma->vm_start;

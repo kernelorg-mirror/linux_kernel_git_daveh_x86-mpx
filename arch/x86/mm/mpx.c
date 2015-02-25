@@ -525,6 +525,7 @@ static int allocate_bt(struct mm_struct *mm, long __user *bd_entry)
 		ret = -EINVAL;
 		goto out_unmap;
 	}
+	trace_mpx_new_bounds_table(bt_addr);
 	return 0;
 out_unmap:
 	vm_munmap(bt_addr, mpx_bt_size_bytes(mm));

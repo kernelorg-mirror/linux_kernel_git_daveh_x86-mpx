@@ -84,6 +84,28 @@ TRACE_EVENT(mpx_unmap_zap,
 	)
 );
 
+TRACE_EVENT(mpx_unmap_search,
+
+	TP_PROTO(unsigned long start,
+		 unsigned long end),
+	TP_ARGS(start, end),
+
+	TP_STRUCT__entry(
+		__field(unsigned long, start)
+		__field(unsigned long, end)
+	),
+
+	TP_fast_assign(
+		__entry->start = start;
+		__entry->end   = end;
+	),
+
+	TP_printk("0x%llx -> 0x%llx",
+		(u64)__entry->start,
+		(u64)__entry->end
+	)
+);
+
 #endif /* CONFIG_X86_INTEL_MPX */
 
 #undef TRACE_INCLUDE_PATH

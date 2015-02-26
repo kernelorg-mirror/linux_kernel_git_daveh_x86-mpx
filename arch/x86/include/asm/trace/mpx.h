@@ -53,15 +53,6 @@ TRACE_EVENT(bounds_exception_mpx,
 		__entry->bndstatus)
 );
 
-#else
-
-/*
- * This gets used outside of MPX-specific code, so we need a stub.
- */
-static inline void trace_bounds_exception_mpx(struct bndcsr *bndcsr)
-{
-}
-
 TRACE_EVENT(mpx_unmap_zap,
 
 	TP_PROTO(unsigned long start,
@@ -121,6 +112,15 @@ TRACE_EVENT(mpx_new_bounds_table,
 
 	TP_printk("table vaddr:%p", (void *)__entry->table_vaddr)
 );
+
+#else
+
+/*
+ * This gets used outside of MPX-specific code, so we need a stub.
+ */
+static inline void trace_bounds_exception_mpx(struct bndcsr *bndcsr)
+{
+}
 
 #endif /* CONFIG_X86_INTEL_MPX */
 

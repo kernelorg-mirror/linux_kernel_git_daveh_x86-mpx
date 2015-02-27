@@ -412,6 +412,12 @@ dotraplinkage void do_bounds(struct pt_regs *regs, long error_code)
 	case 2:	/* Bound directory has invalid entry. */
 		if (mpx_handle_bd_fault(xsave_buf))
 			goto exit_trap;
+		/*
+		 * The CPU seems to repeat bounds exceptions if we
+		 * leave the "Invalid BD entry" bit set even if we
+		 * have corrected the invalid entry.
+		 */
+		bndcsr->bndstatus = 0;
 		break; /* Success, it was handled */
 	case 1: /* Bound violation. */
 		info = mpx_generate_siginfo(regs, xsave_buf);

@@ -748,9 +748,7 @@ void *tsk_get_xsave_field(struct task_struct *tsk, int xsave_field)
 {
 	union thread_xstate *xstate;
 
-	preempt_disable();
-	fpu_save_init(&tsk->thread.fpu);
-	preempt_enable();
+	unlazy_fpu(tsk);
 	xstate = tsk->thread.fpu.state;
 	/*
 	 * This might be unallocated if the FPU

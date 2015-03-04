@@ -10,7 +10,15 @@
 #define PAGE_MASK	(~(PAGE_SIZE-1))
 
 #define __PHYSICAL_MASK		((phys_addr_t)((1ULL << __PHYSICAL_MASK_SHIFT) - 1))
+#ifdef CONFIG_X86_64
+/*
+ * This version doesn't work on 32-bit because __VIRTUAL_MASK_SHIFT=32
+ * overflows the unsigned long we're trying to shift.
+ */
 #define __VIRTUAL_MASK		((1UL << __VIRTUAL_MASK_SHIFT) - 1)
+#else
+#define __VIRTUAL_MASK		(~0UL)
+#endif
 
 /* Cast PAGE_MASK to a signed type so that it is sign-extended if
    virtual addresses are 32-bits but physical addresses are larger

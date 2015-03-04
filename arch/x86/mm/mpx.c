@@ -358,7 +358,9 @@ static __user void *task_get_bounds_dir(struct task_struct *tsk)
 	 * The bounds directory pointer is stored in a register
 	 * only accessible if we first do an xsave.
 	 */
+	preempt_disable();
 	fpu_save_init(&tsk->thread.fpu);
+	preempt_enable();
 	bndcsr = get_xsave_addr(&tsk->thread.fpu.state->xsave, XSTATE_BNDCSR);
 	if (!bndcsr)
 		return MPX_INVALID_BOUNDS_DIR;

@@ -16,6 +16,7 @@
 #include <asm/mmu_context.h>
 #include <asm/mpx.h>
 #include <asm/processor.h>
+#include <asm/trace/mpx.h>
 #include <asm/fpu-internal.h>
 
 #define CREATE_TRACE_POINTS
@@ -337,6 +338,7 @@ siginfo_t *mpx_generate_siginfo(struct pt_regs *regs,
 		err = -EINVAL;
 		goto err_out;
 	}
+	trace_mpx_bounds_register_exception(info->si_addr, bndreg);
 	return info;
 err_out:
 	/* info might be NULL, but kfree() handles that */

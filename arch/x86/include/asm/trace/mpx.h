@@ -97,6 +97,22 @@ TRACE_EVENT(mpx_unmap_search,
 	)
 );
 
+TRACE_EVENT(mpx_new_bounds_table,
+
+	TP_PROTO(unsigned long table_vaddr),
+	TP_ARGS(table_vaddr),
+
+	TP_STRUCT__entry(
+		__field(unsigned long, table_vaddr)
+	),
+
+	TP_fast_assign(
+		__entry->table_vaddr = table_vaddr;
+	),
+
+	TP_printk("table vaddr:%p", (void *)__entry->table_vaddr)
+);
+
 #else
 
 /*

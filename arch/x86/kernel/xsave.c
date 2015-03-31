@@ -722,3 +722,34 @@ void *get_xsave_addr(struct xsave_struct *xsave, int xstate)
 	return (void *)xsave + xstate_comp_offsets[feature];
 }
 EXPORT_SYMBOL_GPL(get_xsave_addr);
+
+/*
+ * This wraps up the common operations that need to occur when retrieving
+ * data from an xsave struct.  It first ensures that the task was actually
+ * using the FPU and retrieves the data in to a buffer.  It then calculates
+ * the offset of the requested field in the buffer.
+ *
+ * This function is safe to call whether the FPU is in use or not.
+ *
+ * Inputs:
+ *	@tsk: the task from which we are fetching xsave state
+ *	@xsave_field: state which is defined in xsave.h (e.g. XSTATE_FP,
+ *	XSTATE_SSE, etc...)
+ * Output:
+ *	address of the state in the xsave area.
+ */
+void *tsk_get_xsave_field(struct task_struct *tsk, int xsave_field)
+{
+	union thread_xstate *xstate;
+
+	if (!used_math())
+		return NULL;
+	/*
+	 * unlazy_fpu() is poorly named and will actually
+	 * save the xstate off in to the memory buffer.
+	 */
+	unlazy_fpu(tsk);
+	xstate = tsk->thread.fpu.state;
+
+	return get_xsave_addr(&xstate->xsave, xsave_field);
+}

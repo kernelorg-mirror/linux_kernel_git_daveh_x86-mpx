@@ -492,7 +492,7 @@ static void __init setup_xstate_features(void)
  * Input: void
  * Output: void
  */
-void setup_xstate_comp(void)
+static void __init setup_xstate_comp(void)
 {
 	unsigned int xstate_comp_sizes[sizeof(pcntxt_mask)*8];
 	int i;
@@ -652,6 +652,7 @@ static void __init xstate_enable_boot_cpu(void)
 			eagerfpu = ENABLE;
 		}
 	}
+	setup_xstate_comp();
 
 	pr_info("enabled xstate_bv 0x%llx, cntxt size 0x%x using %s\n",
 		pcntxt_mask, xstate_size,

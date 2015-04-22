@@ -292,8 +292,7 @@ bad_opcode:
  *
  * The caller is expected to kfree() the returned siginfo_t.
  */
-siginfo_t *mpx_generate_siginfo(struct pt_regs *regs,
-				struct task_struct *tsk)
+siginfo_t *mpx_generate_siginfo(struct pt_regs *regs)
 {
 	struct bndreg *bndregs, *bndreg;
 	siginfo_t *info = NULL;
@@ -362,7 +361,7 @@ err_out:
 	return ERR_PTR(err);
 }
 
-static __user void *task_get_bounds_dir(struct task_struct *tsk)
+static __user void *mpx_get_bounds_dir(void)
 {
 	struct bndcsr *bndcsr;
 
@@ -392,10 +391,10 @@ static __user void *task_get_bounds_dir(struct task_struct *tsk)
 		(bndcsr->bndcfgu & MPX_BNDCFG_ADDR_MASK);
 }
 
-int mpx_enable_management(struct task_struct *tsk)
+int mpx_enable_management(void)
 {
 	void __user *bd_base = MPX_INVALID_BOUNDS_DIR;
-	struct mm_struct *mm = tsk->mm;
+	struct mm_struct *mm = current->mm;
 	int ret = 0;
 
 	/*
@@ -408,7 +407,7 @@ int mpx_enable_management(struct task_struct *tsk)
 	 * directory here means that we do not have to do xsave in the
 	 * unmap path; we can just use mm->bd_addr instead.
 	 */
-	bd_base = task_get_bounds_dir(tsk);
+	bd_base = mpx_get_bounds_dir();
 	down_write(&mm->mmap_sem);
 	mm->bd_addr = bd_base;
 	if (mm->bd_addr == MPX_INVALID_BOUNDS_DIR)
@@ -418,7 +417,7 @@ int mpx_enable_management(struct task_struct *tsk)
 	return ret;
 }
 
-int mpx_disable_management(struct task_struct *tsk)
+int mpx_disable_management(void)
 {
 	struct mm_struct *mm = current->mm;
 
@@ -543,7 +542,7 @@ out_unmap:
  * bound table is 16KB. With 64-bit mode, the size of BD is 2GB,
  * and the size of each bound table is 4MB.
  */
-static int do_mpx_bt_fault(struct task_struct *tsk)
+static int do_mpx_bt_fault(void)
 {
 	unsigned long bd_entry, bd_base;
 	struct bndcsr *bndcsr;
@@ -572,7 +571,7 @@ static int do_mpx_bt_fault(struct task_struct *tsk)
 	return allocate_bt(mm, (long __user *)bd_entry);
 }
 
-int mpx_handle_bd_fault(struct task_struct *tsk)
+int mpx_handle_bd_fault(void)
 {
 	/*
 	 * Userspace never asked us to manage the bounds tables,
@@ -581,7 +580,7 @@ int mpx_handle_bd_fault(struct task_struct *tsk)
 	if (!kernel_managing_mpx_tables(current->mm))
 		return -EINVAL;
 
-	if (do_mpx_bt_fault(tsk)) {
+	if (do_mpx_bt_fault()) {
 		force_sig(SIGSEGV, current);
 		/*
 		 * The force_sig() is essentially "handling" this

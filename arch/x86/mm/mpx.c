@@ -719,7 +719,14 @@ static unsigned long mpx_get_bt_entry_offset_bytes(struct mm_struct *mm,
 static inline unsigned long bd_entry_virt_space(struct mm_struct *mm)
 {
 	unsigned long long virt_space = (1ULL << boot_cpu_data.x86_virt_bits);
-	if (is_64bit_mm(mm))
+	unsigned long long GB = (1ULL << 30);
+
+	/* Running a 32-bit binary on a 64-bit kernel ? */
+	if (IS_ENABLED(CONFIG_IA32_EMULATION) &&
+	    !is_64bit_mm(mm))
+		return (4 * GB) / MPX_BD_NR_ENTRIES_32;
+
+	if (IS_ENABLED(CONFIG_X86_64))
 		return virt_space / MPX_BD_NR_ENTRIES_64;
 	else
 		return virt_space / MPX_BD_NR_ENTRIES_32;

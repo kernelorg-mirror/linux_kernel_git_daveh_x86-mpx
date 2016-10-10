@@ -684,6 +684,7 @@ unsigned long page_address_in_vma(struct page *page, struct vm_area_struct *vma)
 pmd_t *mm_find_pmd(struct mm_struct *mm, unsigned long address)
 {
 	pgd_t *pgd;
+	p4d_t *p4d;
 	pud_t *pud;
 	pmd_t *pmd = NULL;
 	pmd_t pmde;
@@ -692,7 +693,11 @@ pmd_t *mm_find_pmd(struct mm_struct *mm, unsigned long address)
 	if (!pgd_present(*pgd))
 		goto out;
 
-	pud = pud_offset(pgd, address);
+	p4d = p4d_offset(pgd, address);
+	if (!p4d_present(*p4d))
+		goto out;
+
+	pud = pud_offset(p4d, address);
 	if (!pud_present(*pud))
 		goto out;
 
@@ -797,6 +802,7 @@ bool page_check_address_transhuge(struct page *page, struct mm_struct *mm,
 				  pte_t **ptep, spinlock_t **ptlp)
 {
 	pgd_t *pgd;
+	p4d_t *p4d;
 	pud_t *pud;
 	pmd_t *pmd;
 	pte_t *pte;
@@ -816,7 +822,10 @@ bool page_check_address_transhuge(struct page *page, struct mm_struct *mm,
 	pgd = pgd_offset(mm, address);
 	if (!pgd_present(*pgd))
 		return false;
-	pud = pud_offset(pgd, address);
+	p4d = p4d_offset(pgd, address);
+	if (!p4d_present(*p4d))
+		return false;
+	pud = pud_offset(p4d, address);
 	if (!pud_present(*pud))
 		return false;
 	pmd = pmd_offset(pud, address);

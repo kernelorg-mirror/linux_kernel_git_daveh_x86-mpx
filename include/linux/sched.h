@@ -3661,4 +3661,9 @@ void cpufreq_add_update_util_hook(int cpu, struct update_util_data *data,
 void cpufreq_remove_update_util_hook(int cpu);
 #endif /* CONFIG_CPU_FREQ */
 
+static inline unsigned long mmap_max_addr(void)
+{
+	return min(TASK_SIZE, rlimit(RLIMIT_VADDR));
+}
+
 #endif

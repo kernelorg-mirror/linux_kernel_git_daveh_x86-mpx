@@ -115,7 +115,7 @@ static void find_start_end(unsigned long flags, unsigned long *begin,
 		}
 	} else {
 		*begin = current->mm->mmap_legacy_base;
-		*end = TASK_SIZE;
+		*end = mmap_max_addr();
 	}
 }
 
@@ -168,7 +168,7 @@ arch_get_unmapped_area_topdown(struct file *filp, const unsigned long addr0,
 	struct vm_unmapped_area_info info;
 
 	/* requested length too big for entire address space */
-	if (len > TASK_SIZE)
+	if (len > mmap_max_addr())
 		return -ENOMEM;
 
 	if (flags & MAP_FIXED)
@@ -182,7 +182,7 @@ arch_get_unmapped_area_topdown(struct file *filp, const unsigned long addr0,
 	if (addr) {
 		addr = PAGE_ALIGN(addr);
 		vma = find_vma(mm, addr);
-		if (TASK_SIZE - len >= addr &&
+		if (mmap_max_addr() - len >= addr &&
 				(!vma || addr + len <= vma->vm_start))
 			return addr;
 	}

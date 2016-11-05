@@ -433,7 +433,8 @@ static unsigned long mremap_to(unsigned long addr, unsigned long old_len,
 	if (offset_in_page(new_addr))
 		goto out;
 
-	if (new_len > TASK_SIZE || new_addr > TASK_SIZE - new_len)
+	if (new_len > mmap_max_addr() ||
+			new_addr > mmap_max_addr() - new_len)
 		goto out;
 
 	/* Ensure the old/new locations do not overlap */

@@ -121,8 +121,6 @@ static struct linux_binfmt aout_format = {
 	.min_coredump	= PAGE_SIZE
 };
 
-#define BAD_ADDR(x)	((unsigned long)(x) >= TASK_SIZE)
-
 static int set_brk(unsigned long start, unsigned long end)
 {
 	start = PAGE_ALIGN(start);

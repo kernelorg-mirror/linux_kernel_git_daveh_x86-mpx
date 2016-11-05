@@ -905,7 +905,7 @@ static int validate_mmap_request(struct file *file,
 
 	/* Careful about overflows.. */
 	rlen = PAGE_ALIGN(len);
-	if (!rlen || rlen > TASK_SIZE)
+	if (!rlen || rlen > mmap_max_addr())
 		return -ENOMEM;
 
 	/* offset overflow? */

@@ -1718,7 +1718,7 @@ exit_err:
  */
 static int validate_prctl_map(struct prctl_mm_map *prctl_map)
 {
-	unsigned long mmap_max_addr = TASK_SIZE;
+	unsigned long max_addr = mmap_max_addr();
 	struct mm_struct *mm = current->mm;
 	int error = -EINVAL, i;
 
@@ -1743,7 +1743,7 @@ static int validate_prctl_map(struct prctl_mm_map *prctl_map)
 	for (i = 0; i < ARRAY_SIZE(offsets); i++) {
 		u64 val = *(u64 *)((char *)prctl_map + offsets[i]);
 
-		if ((unsigned long)val >= mmap_max_addr ||
+		if ((unsigned long)val >= max_addr ||
 		    (unsigned long)val < mmap_min_addr)
 			goto out;
 	}
@@ -1949,7 +1949,7 @@ static int prctl_set_mm(int opt, unsigned long addr,
 	if (opt == PR_SET_MM_AUXV)
 		return prctl_set_auxv(mm, addr, arg4);
 
-	if (addr >= TASK_SIZE || addr < mmap_min_addr)
+	if (addr >= mmap_max_addr() || addr < mmap_min_addr)
 		return -EINVAL;
 
 	error = -EINVAL;

@@ -3,6 +3,9 @@
 
 #include <uapi/asm-generic/resource.h>
 
+#ifndef USER_VADDR_LIM
+#define USER_VADDR_LIM RLIM_INFINITY
+#endif
 
 /*
  * boot-time rlimit defaults for the init task:
@@ -25,6 +28,7 @@
 	[RLIMIT_NICE]		= { 0, 0 },				\
 	[RLIMIT_RTPRIO]		= { 0, 0 },				\
 	[RLIMIT_RTTIME]		= {  RLIM_INFINITY,  RLIM_INFINITY },	\
+	[RLIMIT_VADDR]		= { USER_VADDR_LIM,  RLIM_INFINITY },   \
 }
 
 #endif

@@ -161,6 +161,7 @@ void save_v86_state(struct kernel_vm86_regs *regs, int retval)
 static void mark_screen_rdonly(struct mm_struct *mm)
 {
 	pgd_t *pgd;
+	p4d_t *p4d;
 	pud_t *pud;
 	pmd_t *pmd;
 	pte_t *pte;
@@ -171,7 +172,10 @@ static void mark_screen_rdonly(struct mm_struct *mm)
 	pgd = pgd_offset(mm, 0xA0000);
 	if (pgd_none_or_clear_bad(pgd))
 		goto out;
-	pud = pud_offset(pgd, 0xA0000);
+	p4d = p4d_offset(pgd, 0xA0000);
+	if (p4d_none_or_clear_bad(p4d))
+		goto out;
+	pud = pud_offset(p4d, 0xA0000);
 	if (pud_none_or_clear_bad(pud))
 		goto out;
 	pmd = pmd_offset(pud, 0xA0000);

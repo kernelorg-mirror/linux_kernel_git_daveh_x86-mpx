@@ -31,8 +31,16 @@ static int __init map_range(struct range *range)
 static void __init clear_pgds(unsigned long start,
 			unsigned long end)
 {
-	for (; start < end; start += PGDIR_SIZE)
-		pgd_clear(pgd_offset_k(start));
+	pgd_t *pgd;
+
+	for (; start < end; start += PGDIR_SIZE) {
+		pgd = pgd_offset_k(start);
+#ifdef __PAGETABLE_P4D_FOLDED
+		p4d_clear(p4d_offset(pgd, start));
+#else
+		pgd_clear(pgd);
+#endif
+	}
 }
 
 static void __init kasan_map_early_shadow(pgd_t *pgd)

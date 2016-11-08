@@ -135,7 +135,7 @@ static pgd_t *efi_pgd;
 int __init efi_alloc_page_tables(void)
 {
 	pgd_t *pgd;
-	pud_t *pud;
+	p4d_t *p4d;
 	gfp_t gfp_mask;
 
 	if (efi_enabled(EFI_OLD_MEMMAP))
@@ -148,13 +148,13 @@ int __init efi_alloc_page_tables(void)
 
 	pgd = efi_pgd + pgd_index(EFI_VA_END);
 
-	pud = pud_alloc_one(NULL, 0);
-	if (!pud) {
+	p4d = p4d_alloc_one(NULL, 0);
+	if (!p4d) {
 		free_page((unsigned long)efi_pgd);
 		return -ENOMEM;
 	}
 
-	pgd_populate(NULL, pgd, pud);
+	pgd_populate(NULL, pgd, p4d);
 
 	return 0;
 }

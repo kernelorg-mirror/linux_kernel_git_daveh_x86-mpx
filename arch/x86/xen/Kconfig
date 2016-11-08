@@ -4,6 +4,7 @@
 
 config XEN
 	bool "Xen guest support"
+	depends on BROKEN
 	depends on PARAVIRT
 	select PARAVIRT_CLOCK
 	select XEN_HAVE_PVMMU

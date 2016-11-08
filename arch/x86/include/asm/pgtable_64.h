@@ -41,7 +41,7 @@ extern void paging_init(void);
 
 struct mm_struct;
 
-void set_pte_vaddr_pud(pud_t *pud_page, unsigned long vaddr, pte_t new_pte);
+void set_pte_vaddr_pud(pud_t *pud, unsigned long vaddr, pte_t new_pte);
 
 
 static inline void native_pte_clear(struct mm_struct *mm, unsigned long addr,
@@ -104,6 +104,16 @@ static inline void native_set_pud(pud_t *pudp, pud_t pud)
 static inline void native_pud_clear(pud_t *pud)
 {
 	native_set_pud(pud, native_make_pud(0));
+}
+
+static inline void native_set_p4d(p4d_t *p4dp, p4d_t p4d)
+{
+	*p4dp = p4d;
+}
+
+static inline void native_p4d_clear(p4d_t *p4d)
+{
+	native_set_p4d(p4d, (p4d_t) { .pgd = native_make_pgd(0)});
 }
 
 static inline void native_set_pgd(pgd_t *pgdp, pgd_t pgd)

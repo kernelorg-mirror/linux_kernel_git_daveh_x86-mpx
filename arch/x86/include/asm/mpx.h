@@ -37,6 +37,11 @@
 #define MPX_BD_LEGACY_NR_ENTRIES_64	(1UL<<28)
 
 /*
+ * We only support one value for MAWA
+ */
+#define MPX_MAWA_VALUE		9
+
+/*
  * The 32-bit directory is 4MB (2^22) in size, and with 4-byte
  * entries it has 2^20 entries.
  */

@@ -85,7 +85,7 @@ void ___pud_free_tlb(struct mmu_gather *tlb, pud_t *pud)
 #if CONFIG_PGTABLE_LEVELS > 4
 void ___p4d_free_tlb(struct mmu_gather *tlb, p4d_t *p4d)
 {
-	paravirt_release_p4d(__pa(p4d) >> PAGE_SHIFT);
+	//paravirt_release_p4d(__pa(p4d) >> PAGE_SHIFT);
 	tlb_remove_page(tlb, virt_to_page(p4d));
 }
 #endif	/* CONFIG_PGTABLE_LEVELS > 4 */
